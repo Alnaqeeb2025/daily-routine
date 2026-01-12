@@ -2,192 +2,374 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مُتابِع الروتين اليومي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تطبيق همم - متابعة الروتين</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
-        .checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #10b981; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 20px; }
-        h2 { color: #1f2937; font-weight: bold; margin-bottom: 15px; border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; }
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        body { font-family: 'Tajawal', sans-serif; background-color: #f8fafc; color: #1e293b; padding-bottom: 80px; }
+        .card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s; }
+        .card:active { transform: scale(0.99); }
+        .btn-check { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.3s; background: white; }
+        .btn-check.active { background-color: #ecfdf5; border-color: #10b981; color: #047857; }
+        .icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .progress-ring { width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 10px; }
+        .progress-fill { height: 100%; background: #10b981; width: 0%; transition: width 0.5s ease; }
+        h2 { font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        /* تحسينات للجوال */
+        .grid-custom { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
     </style>
 </head>
-<body class="p-4 max-w-2xl mx-auto">
+<body class="bg-slate-50">
 
-    <header class="text-center mb-6">
-        <h1 class="text-3xl font-bold text-emerald-600">همم تعانق القمم 🚀</h1>
-        <p class="text-gray-600 mt-2">نموذج متابعة الروتين اليومي</p>
-        <p id="dateDisplay" class="text-sm text-gray-500 mt-1"></p>
+    <header class="bg-white p-5 shadow-sm sticky top-0 z-50">
+        <div class="flex justify-between items-center mb-2">
+            <div>
+                <h1 class="text-2xl font-bold text-emerald-600">تطبيق هِمم</h1>
+                <p class="text-xs text-gray-500" id="currentDate">جاري التحميل...</p>
+            </div>
+            <div class="text-center">
+                <span id="scoreText" class="text-xl font-bold text-emerald-600">0%</span>
+                <p class="text-[10px] text-gray-400">إنجاز اليوم</p>
+            </div>
+        </div>
+        <div class="progress-ring">
+            <div id="progressBar" class="progress-fill"></div>
+        </div>
     </header>
 
-    <section class="card">
-        <h2>🕌 1. الصلوات المفروضة</h2>
-        <div class="overflow-x-auto">
-            <table class="w-full text-center text-sm">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="p-2">الصلاة</th>
-                        <th class="p-2">أديتها؟</th>
-                        <th class="p-2">جماعة؟</th>
-                        <th class="p-2">السنن؟</th>
-                    </tr>
-                </thead>
-                <tbody id="prayersTable">
-                    </tbody>
-            </table>
-        </div>
-    </section>
+    <main class="p-4 max-w-md mx-auto">
 
-    <section class="card">
-        <h2>📖 2. القرآن الكريم</h2>
-        <label class="checkbox-wrapper p-2 bg-emerald-50 rounded cursor-pointer">
-            <input type="checkbox" id="quranCheck">
-            <span class="font-medium">قراءة 5 صفحات من المصحف</span>
-        </label>
-    </section>
+        <section class="grid grid-cols-2 gap-3 mb-4">
+            <a href="https://dorar.net/adhkar/1" target="_blank" class="bg-amber-100 text-amber-800 p-3 rounded-xl flex items-center justify-center gap-2 font-bold hover:bg-amber-200 transition">
+                <i class="fa-solid fa-sun text-xl"></i> أذكار الصباح
+            </a>
+            <a href="https://dorar.net/adhkar/2" target="_blank" class="bg-indigo-100 text-indigo-800 p-3 rounded-xl flex items-center justify-center gap-2 font-bold hover:bg-indigo-200 transition">
+                <i class="fa-solid fa-moon text-xl"></i> أذكار المساء
+            </a>
+        </section>
 
-    <section class="card">
-        <h2>📿 3. الأذكار</h2>
-        <div class="grid grid-cols-1 gap-2">
-            <label class="checkbox-wrapper"><input type="checkbox" id="adhkarMorning"> أذكار الصباح</label>
-            <label class="checkbox-wrapper"><input type="checkbox" id="adhkarEvening"> أذكار المساء</label>
-            <label class="checkbox-wrapper"><input type="checkbox" id="adhkarPostPrayer"> أذكار بعد الصلوات</label>
-        </div>
-    </section>
+        <section class="card">
+            <h2><i class="fa-solid fa-mosque text-emerald-500"></i> الصلوات الخمس</h2>
+            <div class="space-y-2" id="prayersContainer">
+                </div>
+        </section>
 
-    <section class="card">
-        <h2>🌱 4. بناء العادات</h2>
-        <div class="grid grid-cols-1 gap-2">
-            <label class="checkbox-wrapper"><input type="checkbox" id="habitWalk"> 🚶 مشي لمدة 20 دقيقة</label>
-            <label class="checkbox-wrapper"><input type="checkbox" id="habitAyah"> 🧠 حفظ آية من القرآن</label>
-            <label class="checkbox-wrapper"><input type="checkbox" id="habitEnglish"> 🗣️ إتقان جملة إنجليزية</label>
-            <label class="checkbox-wrapper"><input type="checkbox" id="habitBook"> 📚 قراءة في كتاب</label>
-            <label class="checkbox-wrapper"><input type="checkbox" id="habitLecture"> 🎧 سماع محاضرة</label>
-        </div>
-    </section>
-
-    <section class="card">
-        <h2>📞 5. صلة الرحم (بمن اتصلت اليوم؟)</h2>
-        <div class="grid grid-cols-2 gap-2" id="kinshipContainer">
+        <section class="card">
+            <h2><i class="fa-solid fa-book-quran text-emerald-500"></i> القرآن والأذكار</h2>
+            <div class="space-y-2">
+                <div class="btn-check" onclick="toggleTask('quran')">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-book-open text-gray-400"></i> 5 صفحات قرآن</span>
+                    <i class="fa-regular fa-circle text-2xl text-gray-300 check-icon"></i>
+                </div>
+                <div class="btn-check" onclick="toggleTask('adhkar_post')">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-hands-praying text-gray-400"></i> أذكار بعد الصلاة</span>
+                    <i class="fa-regular fa-circle text-2xl text-gray-300 check-icon"></i>
+                </div>
             </div>
-    </section>
+        </section>
 
-    <section class="card">
-        <h2>📱 6. وقت الترفيه</h2>
-        <div class="flex flex-col gap-2">
-            <label class="text-sm text-gray-700">الوقت المقضي على وسائل التواصل (بالدقائق):</label>
-            <input type="number" id="screenTime" class="border p-2 rounded w-full" placeholder="مثلاً: 60">
-        </div>
-    </section>
+        <section class="card">
+            <h2><i class="fa-solid fa-seedling text-emerald-500"></i> بناء العادات</h2>
+            <div class="grid-custom">
+                <div class="btn-check flex-col text-center p-3 gap-2 h-auto" onclick="toggleTask('walk')">
+                    <i class="fa-solid fa-person-walking text-2xl text-blue-400"></i>
+                    <span class="text-sm">20د مشي</span>
+                </div>
+                <div class="btn-check flex-col text-center p-3 gap-2 h-auto" onclick="toggleTask('memorize')">
+                    <i class="fa-solid fa-brain text-2xl text-purple-400"></i>
+                    <span class="text-sm">حفظ آية</span>
+                </div>
+                <div class="btn-check flex-col text-center p-3 gap-2 h-auto" onclick="toggleTask('english')">
+                    <i class="fa-solid fa-language text-2xl text-orange-400"></i>
+                    <span class="text-sm">جملة إنجليزية</span>
+                </div>
+                <div class="btn-check flex-col text-center p-3 gap-2 h-auto" onclick="toggleTask('read')">
+                    <i class="fa-solid fa-book text-2xl text-teal-400"></i>
+                    <span class="text-sm">قراءة كتاب</span>
+                </div>
+            </div>
+        </section>
 
-    <div class="flex gap-4 mb-10">
-        <button onclick="saveData()" class="flex-1 bg-emerald-600 text-white py-3 rounded-lg font-bold shadow hover:bg-emerald-700 transition">حفظ التقدم ✅</button>
-        <button onclick="resetData()" class="flex-1 bg-red-500 text-white py-3 rounded-lg font-bold shadow hover:bg-red-600 transition">بدء يوم جديد 🔄</button>
-    </div>
+        <section class="card">
+            <h2><i class="fa-solid fa-users text-emerald-500"></i> صلة الرحم</h2>
+            <p class="text-xs text-gray-400 mb-2">من تواصلت معه اليوم؟</p>
+            <div class="flex flex-wrap gap-2" id="kinshipContainer">
+                </div>
+        </section>
+
+        <section class="card bg-blue-50 border-blue-100">
+            <h2><i class="fa-solid fa-glass-water text-blue-500"></i> متابعة الماء</h2>
+            <div class="flex items-center justify-between mt-2">
+                <button onclick="updateWater(-1)" class="w-10 h-10 bg-white rounded-full shadow text-blue-500 font-bold">-</button>
+                <span id="waterCount" class="text-2xl font-bold text-blue-600">0</span>
+                <button onclick="updateWater(1)" class="w-10 h-10 bg-blue-500 rounded-full shadow text-white font-bold">+</button>
+            </div>
+            <p class="text-center text-xs text-blue-400 mt-1">كوب (250 مل)</p>
+        </section>
+
+        <section class="card">
+            <h2><i class="fa-solid fa-mobile-screen text-red-500"></i> الوقت المهدور</h2>
+            <div class="flex items-center gap-2">
+                <input type="number" id="screenTimeInput" onchange="saveSimpleData()" placeholder="دقائق السوشيال ميديا" class="w-full p-2 rounded-lg border focus:outline-none focus:border-emerald-500">
+                <span class="text-sm text-gray-500">دقيقة</span>
+            </div>
+        </section>
+        
+        <section class="card">
+            <h2><i class="fa-solid fa-heart text-pink-500"></i> لحظة امتنان</h2>
+            <textarea id="gratitudeInput" onchange="saveSimpleData()" rows="2" class="w-full p-2 rounded-lg border text-sm" placeholder="اكتب شيئاً واحداً تشكر الله عليه اليوم..."></textarea>
+        </section>
+
+        <section class="card">
+            <h2 class="justify-between">
+                <span><i class="fa-solid fa-chart-line text-emerald-500"></i> تقرير الأداء</span>
+                <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">آخر 7 أيام</span>
+            </h2>
+            <div class="h-48">
+                <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-500">استمرارك هو سر نجاحك!</p>
+            </div>
+        </section>
+
+        <button onclick="resetDay()" class="w-full text-center text-gray-400 text-sm mt-8 mb-4 underline">اضغط هنا لبدء يوم جديد يدوياً</button>
+        <p class="text-center text-[10px] text-gray-300">تم التطوير بواسطة مساعدك الذكي</p>
+
+    </main>
 
     <script>
-        // إعداد التاريخ
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('ar-SA', options);
+        // --- تهيئة البيانات ---
+        const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+        let appData = JSON.parse(localStorage.getItem('hemaAppV2')) || {};
+        
+        // التأكد من وجود سجل لليوم
+        if (!appData[todayStr]) {
+            appData[todayStr] = {
+                tasks: {},     // للمهام (true/false)
+                water: 0,
+                screenTime: '',
+                gratitude: '',
+                score: 0
+            };
+        }
+        let currentDayData = appData[todayStr];
 
-        // البيانات
-        const prayers = ['الفجر', 'الظهر', 'العصر', 'المغرب', 'العشاء'];
-        const relatives = ['الأم', 'الأب', 'الأخت', 'بنت الأخت', 'قريب', 'قريبة'];
+        // القوائم
+        const prayers = [
+            {id: 'fajr', name: 'الفجر'}, {id: 'dhuhr', name: 'الظهر'}, 
+            {id: 'asr', name: 'العصر'}, {id: 'maghrib', name: 'المغرب'}, {id: 'isha', name: 'العشاء'}
+        ];
+        const kinship = ['الأم', 'الأب', 'الأخت', 'بنت الأخت', 'قريب', 'قريبة'];
 
-        // توليد جدول الصلوات
-        const prayersTable = document.getElementById('prayersTable');
-        prayers.forEach((prayer, index) => {
-            const row = `
-                <tr class="border-b">
-                    <td class="font-bold p-2">${prayer}</td>
-                    <td><input type="checkbox" id="p_${index}_done"></td>
-                    <td><input type="checkbox" id="p_${index}_jamaah"></td>
-                    <td><input type="checkbox" id="p_${index}_sunnah"></td>
-                </tr>
-            `;
-            prayersTable.innerHTML += row;
-        });
-
-        // توليد قائمة صلة الرحم
-        const kinshipContainer = document.getElementById('kinshipContainer');
-        relatives.forEach((relative, index) => {
-            const item = `
-                <label class="checkbox-wrapper bg-gray-50 p-2 rounded">
-                    <input type="checkbox" id="k_${index}"> ${relative}
-                </label>
-            `;
-            kinshipContainer.innerHTML += item;
-        });
-
-        // دالة الحفظ
-        function saveData() {
-            const data = {};
+        // --- بناء الواجهة (Render) ---
+        function init() {
+            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('ar-SA', {weekday:'long', day:'numeric', month:'long'});
             
-            // حفظ الصلوات
-            for(let i=0; i<5; i++) {
-                data[`p_${i}_done`] = document.getElementById(`p_${i}_done`).checked;
-                data[`p_${i}_jamaah`] = document.getElementById(`p_${i}_jamaah`).checked;
-                data[`p_${i}_sunnah`] = document.getElementById(`p_${i}_sunnah`).checked;
-            }
-
-            // حفظ القرآن والأذكار والعادات
-            const ids = ['quranCheck', 'adhkarMorning', 'adhkarEvening', 'adhkarPostPrayer', 
-                         'habitWalk', 'habitAyah', 'habitEnglish', 'habitBook', 'habitLecture'];
-            ids.forEach(id => data[id] = document.getElementById(id).checked);
-
-            // حفظ صلة الرحم
-            for(let i=0; i<relatives.length; i++) {
-                data[`k_${i}`] = document.getElementById(`k_${i}`).checked;
-            }
-
-            // حفظ وقت الشاشة
-            data['screenTime'] = document.getElementById('screenTime').value;
-
-            localStorage.setItem('dailyRoutineData', JSON.stringify(data));
-            alert('تم حفظ تقدمك لليوم! بارك الله في وقتك.');
-        }
-
-        // دالة استرجاع البيانات
-        function loadData() {
-            const saved = localStorage.getItem('dailyRoutineData');
-            if (saved) {
-                const data = JSON.parse(saved);
+            // 1. الصلوات
+            const pContainer = document.getElementById('prayersContainer');
+            pContainer.innerHTML = '';
+            prayers.forEach(p => {
+                const isDone = currentDayData.tasks[`${p.id}_done`];
+                const isJamaah = currentDayData.tasks[`${p.id}_jamaah`];
+                const isSunnah = currentDayData.tasks[`${p.id}_sunnah`];
                 
-                // استرجاع الصلوات
-                for(let i=0; i<5; i++) {
-                    if(data[`p_${i}_done`]) document.getElementById(`p_${i}_done`).checked = true;
-                    if(data[`p_${i}_jamaah`]) document.getElementById(`p_${i}_jamaah`).checked = true;
-                    if(data[`p_${i}_sunnah`]) document.getElementById(`p_${i}_sunnah`).checked = true;
-                }
+                pContainer.innerHTML += `
+                    <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-gray-700">${p.name}</span>
+                            <div class="flex gap-1">
+                                <button onclick="toggleTask('${p.id}_sunnah')" class="text-xs px-2 py-1 rounded ${isSunnah ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-500'}">سنة</button>
+                                <button onclick="toggleTask('${p.id}_jamaah')" class="text-xs px-2 py-1 rounded ${isJamaah ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-500'}">جماعة</button>
+                            </div>
+                        </div>
+                        <div onclick="toggleTask('${p.id}_done')" class="btn-check ${isDone ? 'active' : ''} py-2">
+                            <span class="text-sm">تمت الصلاة</span>
+                            <i class="${isDone ? 'fa-solid fa-circle-check text-emerald-500' : 'fa-regular fa-circle text-gray-300'} text-xl"></i>
+                        </div>
+                    </div>
+                `;
+            });
 
-                // استرجاع الباقي
-                const ids = ['quranCheck', 'adhkarMorning', 'adhkarEvening', 'adhkarPostPrayer', 
-                             'habitWalk', 'habitAyah', 'habitEnglish', 'habitBook', 'habitLecture'];
-                ids.forEach(id => {
-                    if(data[id]) document.getElementById(id).checked = true;
+            // 2. تحديث باقي الأزرار
+            updateUIState();
+            
+            // 3. صلة الرحم
+            const kContainer = document.getElementById('kinshipContainer');
+            if(kContainer.innerHTML === '') { // فقط عند التحميل الأول
+                kinship.forEach((k, idx) => {
+                    const id = `kinship_${idx}`;
+                    kContainer.innerHTML += `
+                        <button id="btn_${id}" onclick="toggleTask('${id}')" class="px-3 py-1 rounded-full text-sm border transition ${currentDayData.tasks[id] ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-500 border-gray-200'}">
+                            ${k}
+                        </button>
+                    `;
                 });
+            } else {
+                // تحديث الحالة فقط
+                kinship.forEach((k, idx) => {
+                    const id = `kinship_${idx}`;
+                    const btn = document.getElementById(`btn_${id}`);
+                    if (currentDayData.tasks[id]) {
+                        btn.className = "px-3 py-1 rounded-full text-sm border transition bg-emerald-500 text-white border-emerald-500";
+                    } else {
+                        btn.className = "px-3 py-1 rounded-full text-sm border transition bg-white text-gray-500 border-gray-200";
+                    }
+                });
+            }
 
-                // استرجاع صلة الرحم
-                for(let i=0; i<relatives.length; i++) {
-                    if(data[`k_${i}`]) document.getElementById(`k_${i}`).checked = true;
+            // 4. القيم النصية والماء
+            document.getElementById('waterCount').innerText = currentDayData.water || 0;
+            document.getElementById('screenTimeInput').value = currentDayData.screenTime || '';
+            document.getElementById('gratitudeInput').value = currentDayData.gratitude || '';
+            
+            calculateScore();
+            renderChart();
+        }
+
+        // --- المنطق والوظائف ---
+
+        function toggleTask(taskId) {
+            // قلب القيمة
+            if (currentDayData.tasks[taskId]) {
+                delete currentDayData.tasks[taskId];
+            } else {
+                currentDayData.tasks[taskId] = true;
+            }
+            saveAndRefresh();
+        }
+
+        function updateWater(amount) {
+            let current = currentDayData.water || 0;
+            current += amount;
+            if (current < 0) current = 0;
+            currentDayData.water = current;
+            saveAndRefresh();
+        }
+
+        function saveSimpleData() {
+            currentDayData.screenTime = document.getElementById('screenTimeInput').value;
+            currentDayData.gratitude = document.getElementById('gratitudeInput').value;
+            saveToStorage(); // حفظ بدون إعادة تحميل الواجهة كاملة
+        }
+
+        function updateUIState() {
+            // تحديث الأزرار العادية (التي لديها class btn-check وتستخدم toggleTask في الـ HTML)
+            // هذه طريقة مبسطة للتحديث البصري
+            document.querySelectorAll('.btn-check').forEach(el => {
+                const onclickAttr = el.getAttribute('onclick');
+                if(onclickAttr && onclickAttr.includes('toggleTask')) {
+                    const id = onclickAttr.match(/'([^']+)'/)[1];
+                    // استثناء الصلوات لأنها معقدة ولها دالة خاصة
+                    if(!id.includes('_done') && !id.includes('_jamaah') && !id.includes('_sunnah')) {
+                         const isActive = currentDayData.tasks[id];
+                         if(isActive) {
+                             el.classList.add('active');
+                             el.querySelector('.check-icon').classList.remove('fa-regular', 'fa-circle', 'text-gray-300');
+                             el.querySelector('.check-icon').classList.add('fa-solid', 'fa-circle-check', 'text-emerald-500');
+                         } else {
+                             el.classList.remove('active');
+                             el.querySelector('.check-icon').classList.add('fa-regular', 'fa-circle', 'text-gray-300');
+                             el.querySelector('.check-icon').classList.remove('fa-solid', 'fa-circle-check', 'text-emerald-500');
+                         }
+                    }
                 }
+            });
+        }
 
-                // استرجاع وقت الشاشة
-                if(data['screenTime']) document.getElementById('screenTime').value = data['screenTime'];
+        function calculateScore() {
+            // حساب نسبة الإنجاز التقريبية
+            // نفترض أن لدينا حوالي 20 مهمة يومية (صلوات، سنن، عادات...)
+            // سنعد المفاتيح التي قيمتها true في tasks
+            const totalTasks = Object.keys(currentDayData.tasks).length;
+            // معادلة بسيطة: كل مهمة بـ 5 نقاط بحد أقصى 100
+            // يمكنك تعقيد المعادلة حسب الأهمية
+            let score = Math.min(100, totalTasks * 4); 
+            
+            // تحديث الواجهة
+            document.getElementById('scoreText').innerText = score + '%';
+            document.getElementById('progressBar').style.width = score + '%';
+            
+            currentDayData.score = score;
+            saveToStorage();
+        }
+
+        function saveAndRefresh() {
+            saveToStorage();
+            init(); // إعادة رسم لتحديث الألوان والأيقونات
+        }
+
+        function saveToStorage() {
+            appData[todayStr] = currentDayData;
+            localStorage.setItem('hemaAppV2', JSON.stringify(appData));
+        }
+
+        function resetDay() {
+            if(confirm('هل تريد تصفير بيانات اليوم؟')) {
+                currentDayData = { tasks: {}, water: 0, screenTime: '', gratitude: '', score: 0 };
+                saveAndRefresh();
             }
         }
 
-        // دالة تصفير البيانات
-        function resetData() {
-            if(confirm('هل أنت متأكد من بدء يوم جديد وتصفير العدادات؟')) {
-                localStorage.removeItem('dailyRoutineData');
-                location.reload();
+        // --- الرسم البياني ---
+        let myChart = null;
+        function renderChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            // جلب بيانات آخر 7 أيام
+            const labels = [];
+            const dataPoints = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const dateKey = d.toLocaleDateString('en-CA');
+                const dayName = d.toLocaleDateString('ar-SA', {weekday: 'short'});
+                
+                labels.push(dayName);
+                if (appData[dateKey]) {
+                    dataPoints.push(appData[dateKey].score || 0);
+                } else {
+                    dataPoints.push(0);
+                }
             }
+
+            if (myChart) myChart.destroy();
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'نسبة الإنجاز',
+                        data: dataPoints,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#10b981',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100, display: false },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
         }
 
-        // تشغيل الاسترجاع عند التحميل
-        loadData();
+        // التشغيل الأولي
+        init();
 
     </script>
 </body>
