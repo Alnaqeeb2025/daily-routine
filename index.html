@@ -65,9 +65,15 @@
         </section>
 
         <section class="card">
-            <h2 class="font-bold text-lg mb-2 flex items-center gap-2 text-gray-700">
-                <i class="fa-solid fa-book-quran text-emerald-500"></i> القرآن الكريم
-            </h2>
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="font-bold text-lg flex items-center gap-2 text-gray-700">
+                    <i class="fa-solid fa-book-quran text-emerald-500"></i> القرآن الكريم
+                </h2>
+                <a href="https://qurancomplex.gov.sa/quran-hafs/" target="_blank" class="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-full shadow hover:bg-emerald-700 transition flex items-center gap-1">
+                    <i class="fa-solid fa-book-open"></i> فتح المصحف
+                </a>
+            </div>
+            
             <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-sm font-semibold text-emerald-800">عدد الصفحات</span>
